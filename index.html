@@ -1,0 +1,838 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reto de Materiales — IMEC1402</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#15181d; --panel:#1d2228; --panel2:#242a32; --line:#333a42;
+  --text:#f2ede6; --text-dim:#9aa3ac;
+  --ember:#ff8a3d; --ember-d:#c9601b;
+  --cyan:#46d1e0; --cyan-d:#1f8f9c;
+  --emerald:#3ed998; --emerald-d:#1f9a6b;
+  --brass:#d9a94f; --brass-d:#a97e2e;
+  --crimson:#e5484d; --crimson-d:#a62c30;
+  --radius:18px;
+}
+@media (prefers-color-scheme: light){
+  :root{ --bg:#15181d; --panel:#1d2228; --panel2:#242a32; --text:#f2ede6; }
+}
+:root[data-theme="light"]{ --bg:#15181d; --panel:#1d2228; --panel2:#242a32; --text:#f2ede6; }
+
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  overflow-x:hidden;
+  min-height:100%;
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255,138,61,.10), transparent 60%),
+    radial-gradient(ellipse 800px 500px at 110% 10%, rgba(70,209,224,.08), transparent 60%);
+}
+.mono{ font-family:'JetBrains Mono', ui-monospace, monospace; }
+
+#app{ min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:28px 18px 40px; }
+.wrap{ width:100%; max-width:860px; margin:0 auto; }
+.wrap-narrow{ width:100%; max-width:480px; margin:0 auto; }
+
+/* ---------- generic bits ---------- */
+.eyebrow{ color:var(--ember); font-size:.8rem; letter-spacing:.02em; margin:0 0 6px; }
+h1.hero{ font-size:clamp(2rem,6vw,3.2rem); line-height:1.05; margin:0 0 10px; font-weight:700; }
+.sub{ color:var(--text-dim); font-size:1.05rem; line-height:1.5; margin:0 0 28px; max-width:60ch;}
+.panel{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:26px; }
+.row{ display:flex; gap:14px; flex-wrap:wrap; }
+.col{ flex:1 1 220px; }
+.btn{
+  appearance:none; border:none; cursor:pointer; font-family:inherit; font-weight:600;
+  font-size:1.02rem; color:var(--bg); background:var(--ember);
+  padding:16px 22px; border-radius:14px; clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);
+  transition:transform .12s ease, filter .12s ease; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+}
+.btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+.btn:active{ transform:translateY(0px) scale(.99); }
+.btn:focus-visible{ outline:3px solid var(--cyan); outline-offset:2px; }
+.btn.secondary{ background:transparent; color:var(--text); border:1px solid var(--line); clip-path:none; border-radius:14px; }
+.btn.ghost{ background:transparent; color:var(--cyan); clip-path:none; padding:10px 14px; }
+.btn.wide{ width:100%; }
+.btn.lg{ padding:22px 26px; font-size:1.15rem; }
+.btn:disabled{ opacity:.45; cursor:not-allowed; filter:none; transform:none; }
+
+label.field{ display:block; margin-bottom:18px; }
+label.field span{ display:block; font-size:.85rem; color:var(--text-dim); margin-bottom:8px; }
+input.input{
+  width:100%; background:var(--panel2); border:1px solid var(--line); color:var(--text);
+  padding:14px 16px; border-radius:12px; font-size:1.1rem; font-family:'JetBrains Mono',monospace;
+  letter-spacing:.04em;
+}
+input.input:focus{ outline:2px solid var(--cyan); outline-offset:1px; }
+input.input.name{ font-family:'Space Grotesk',sans-serif; letter-spacing:0; }
+
+.chips{ display:flex; gap:10px; flex-wrap:wrap; }
+.chip{
+  appearance:none; font-family:'JetBrains Mono',monospace;
+  padding:10px 18px; border-radius:999px; border:1px solid var(--line); background:var(--panel2);
+  color:var(--text-dim); cursor:pointer; font-size:.95rem;
+}
+.chip.active{ background:var(--ember); color:var(--bg); border-color:var(--ember); font-weight:700; }
+
+.badge{ display:inline-flex; align-items:center; gap:8px; background:var(--panel2); border:1px solid var(--line); padding:8px 14px; border-radius:999px; font-size:.85rem; color:var(--text-dim); }
+.pin{ font-family:'JetBrains Mono',monospace; font-weight:700; letter-spacing:.12em; color:var(--ember); }
+
+.topbar{ display:flex; justify-content:space-between; align-items:center; width:100%; max-width:860px; margin:0 auto 18px; color:var(--text-dim); font-size:.9rem; }
+.topbar .mono{ color:var(--text); }
+
+.dots{ display:flex; gap:6px; justify-content:center; margin:8px 0 2px; flex-wrap:wrap; }
+.dot{ width:7px; height:7px; border-radius:2px; background:var(--line); }
+.dot.done{ background:var(--emerald); }
+.dot.now{ background:var(--ember); }
+
+/* ---------- landing ---------- */
+.landing-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px; }
+@media (max-width:620px){ .landing-grid{ grid-template-columns:1fr; } }
+.mode-card{
+  display:block; width:100%; font-family:inherit; appearance:none;
+  background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:30px 26px; text-align:left; cursor:pointer;
+  clip-path:polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+  transition:transform .15s ease, border-color .15s ease;
+}
+.mode-card:hover{ transform:translateY(-3px); border-color:var(--ember); }
+.mode-card:focus-visible{ outline:3px solid var(--ember); outline-offset:3px; }
+.mode-card h3{ margin:14px 0 8px; font-size:1.35rem; color:var(--text); }
+.mode-card p{ color:var(--text-dim); margin:0; line-height:1.5; }
+.tile:focus-visible{ outline:3px solid var(--text); outline-offset:2px; }
+.chip:focus-visible{ outline:2px solid var(--cyan); outline-offset:2px; }
+.mode-icon{ width:46px; height:46px; }
+
+/* ---------- question tiles ---------- */
+.qmeta{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; color:var(--text-dim); font-size:.9rem;}
+.qtext{ font-size:clamp(1.3rem,3.6vw,2.1rem); font-weight:700; line-height:1.25; margin:10px 0 24px; }
+.qtext.small{ font-size:clamp(1.05rem,3.2vw,1.4rem); }
+
+.ring-wrap{ position:relative; width:118px; height:118px; margin:0 auto 18px; }
+.ring-wrap.sm{ width:84px; height:84px; }
+.ring-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
+.ring-bg{ fill:none; stroke:var(--panel2); stroke-width:8; }
+.ring-fg{ fill:none; stroke:var(--ember); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset linear; }
+.ring-num{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1.7rem; }
+.ring-wrap.sm .ring-num{ font-size:1.2rem; }
+
+.tiles{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+@media (max-width:520px){ .tiles{ grid-template-columns:minmax(0,1fr); gap:10px; } }
+.tile{
+  min-width:0; overflow-wrap:anywhere;
+  position:relative; border:none; cursor:pointer; text-align:left; color:#121416; font-weight:700;
+  padding:20px 18px 20px 54px; border-radius:16px; font-size:1.05rem; line-height:1.3; min-height:76px;
+  display:flex; align-items:center;
+  clip-path:polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+  transition:transform .1s ease, filter .12s ease, opacity .2s ease;
+}
+@media (max-width:520px){ .tile{ padding:14px 14px 14px 52px; min-height:60px; font-size:1rem; } }
+.tile:hover{ filter:brightness(1.06); }
+.tile:active{ transform:scale(.985); }
+.tile:disabled{ cursor:default; }
+.tile .shape{ position:absolute; left:16px; top:50%; transform:translateY(-50%); width:26px; height:26px; }
+.tile.t0{ background:var(--ember); } .tile.t1{ background:var(--cyan); }
+.tile.t2{ background:var(--emerald); } .tile.t3{ background:var(--brass); }
+.tile.selected{ outline:4px solid var(--text); outline-offset:-4px; }
+.tile.correct{ box-shadow:0 0 0 4px var(--emerald) inset, 0 0 24px rgba(62,217,152,.6); }
+.tile.incorrect{ opacity:.35; }
+.tile.dim{ opacity:.55; }
+
+.feedback{ text-align:center; padding:26px 10px 6px; }
+.feedback .big{ font-size:2.4rem; font-weight:700; margin:0 0 6px; }
+.feedback .pts{ font-family:'JetBrains Mono',monospace; color:var(--ember); font-size:1.3rem; }
+.explain{ background:var(--panel2); border-left:3px solid var(--cyan); padding:14px 16px; border-radius:10px; margin-top:16px; color:var(--text-dim); line-height:1.5; }
+
+.scorebar{ display:flex; justify-content:center; gap:28px; margin:14px 0 26px; }
+.scorebar .item{ text-align:center; }
+.scorebar .v{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:1.4rem; color:var(--emerald); }
+.scorebar .l{ font-size:.78rem; color:var(--text-dim); }
+
+/* ---------- final ---------- */
+.podium{ display:flex; align-items:flex-end; justify-content:center; gap:14px; margin:30px 0; }
+.pod{ text-align:center; width:110px; }
+.pod .bar{ border-radius:10px 10px 0 0; }
+.pod.p1 .bar{ height:120px; background:var(--ember); }
+.pod.p2 .bar{ height:90px; background:var(--cyan); }
+.pod.p3 .bar{ height:66px; background:var(--brass); }
+.tier{ font-size:1.5rem; font-weight:700; color:var(--ember); margin:8px 0 2px; }
+
+.confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:5; }
+.confetti span{ position:absolute; top:-20px; width:8px; height:14px; opacity:.9; border-radius:2px; animation:fall linear forwards; }
+@keyframes fall{ to{ transform:translateY(110vh) rotate(260deg); opacity:.2; } }
+
+.footnote{ color:var(--text-dim); font-size:.8rem; margin-top:30px; text-align:center; line-height:1.6; }
+a.link, .linklike{ color:var(--cyan); text-decoration:none; cursor:pointer; }
+.hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================== CONTENIDO ============================== */
+/* Banco de preguntas — guía de estudio del curso IMEC1402 + mazo de flashcards «Ingeniería de Materiales: Examen Medio Termino».
+   c = índice de la opción correcta (0-3). ex = explicación breve. b = nivel de Bloom. src = origen (guía o número de tarjeta del mazo). */
+var BANK = [
+{t:"Clasificación", q:"¿Cuál de las siguientes NO es una de las familias principales de materiales de ingeniería?", o:["Metales","Cerámicos","Polímeros","Aleaciones"], c:3, ex:"Las familias son metales, cerámicos, polímeros y compuestos; las aleaciones son un tipo de metal, no una familia aparte.", b:"Recordar", src:"guía"},
+{t:"Clasificación", q:"En un cable con núcleo de cobre y forro de PVC, ¿qué enlace permite que el cobre conduzca electricidad?", o:["Iónico","Covalente","Metálico","Puente de hidrógeno"], c:2, ex:"El enlace metálico aporta electrones libres que se mueven con facilidad.", b:"Aplicar", src:"guía"},
+{t:"Clasificación", q:"La ciencia de materiales relaciona procesamiento, estructura, propiedades y...", o:["Costo","Desempeño","Color","Peso"], c:1, ex:"Es el tetraedro clásico de la disciplina: procesamiento–estructura–propiedades–desempeño.", b:"Recordar", src:"guía"},
+{t:"Clasificación", q:"Un compuesto como el CFRP (fibra de carbono + epoxi) se usa porque ofrece:", o:["Menor costo que cualquier metal","Propiedades complementarias: rígido y ligero","Mayor conductividad que el cobre","Mayor punto de fusión que un cerámico"], c:1, ex:"Combina la rigidez de la fibra con la ligereza de la matriz polimérica.", b:"Comprender", src:"guía"},
+{t:"Enlace", q:"Si la diferencia de electronegatividad entre dos átomos es mayor a 1.7, el enlace es predominantemente:", o:["Covalente no polar","Covalente polar","Iónico","Metálico"], c:2, ex:"A mayor ΔEN, mayor carácter iónico del enlace.", b:"Aplicar", src:"guía"},
+{t:"Enlace", q:"¿Cuál de estos es un enlace secundario, más débil que los primarios?", o:["Iónico","Covalente","Metálico","Puente de hidrógeno"], c:3, ex:"El puente de hidrógeno es una fuerza de van der Waals, mucho más débil que iónico, covalente o metálico.", b:"Recordar", src:"guía"},
+{t:"Enlace", q:"El hielo flota en agua líquida porque:", o:["Es menos denso por el arreglo abierto de los puentes de hidrógeno","El agua se expande al fundirse","El hielo tiene enlace metálico","El agua líquida ocupa más volumen por puente de hidrógeno"], c:0, ex:"Los puentes de hidrógeno direccionales obligan a un arreglo tetraédrico abierto en el hielo.", b:"Comprender", src:"guía"},
+{t:"Enlace", q:"El grafito es covalente como el diamante, pero conduce electricidad. ¿Por qué?", o:["Tiene enlace iónico","Cada átomo de C deja un electrón deslocalizado","Tiene más vacancias que el diamante","En realidad es un metal"], c:1, ex:"En el grafito cada carbono usa 3 electrones en enlaces covalentes y el cuarto queda libre entre capas.", b:"Comprender", src:"guía"},
+{t:"Estructuras", q:"¿Cuál es el factor de empaquetamiento atómico (FEA) de la estructura FCC?", o:["0.52","0.68","0.74","1.00"], c:2, ex:"FCC y HCP ideal comparten el máximo empaquetamiento posible de esferas rígidas: 0.74.", b:"Recordar", src:"guía"},
+{t:"Estructuras", q:"En la estructura BCC, los átomos se tocan a lo largo de:", o:["La arista de la celda","La diagonal de una cara","La diagonal del cuerpo","No se tocan"], c:2, ex:"4R = √3·a₀ en la estructura BCC.", b:"Recordar", src:"guía"},
+{t:"Estructuras", q:"¿Cuál es el número de coordinación de la estructura FCC?", o:["6","8","10","12"], c:3, ex:"FCC y HCP ideal tienen número de coordinación 12.", b:"Recordar", src:"guía"},
+{t:"Estructuras", q:"Un material con orden atómico solo de corto alcance se llama:", o:["Cristalino","Amorfo","Alotrópico","Policristalino"], c:1, ex:"Un cristal tiene orden de largo alcance; un amorfo, como el vidrio, solo de corto alcance.", b:"Recordar", src:"guía"},
+{t:"Estructuras", q:"En ρ = nA/(Vc·NA), la letra n representa:", o:["El número de Avogadro","Los átomos por celda unitaria","El radio atómico","El número de coordinación"], c:1, ex:"n es el número de átomos que contiene una celda unitaria completa.", b:"Comprender", src:"guía"},
+{t:"Alotropía", q:"La alotropía es polimorfismo que ocurre específicamente en:", o:["Un compuesto cerámico","Un elemento puro","Un polímero","Una solución líquida"], c:1, ex:"Alotropía = polimorfismo de un elemento puro, como el Fe o el carbono.", b:"Recordar", src:"guía"},
+{t:"Alotropía", q:"Al calentarse por arriba de 912 °C, el hierro cambia de Fe-α (BCC) a:", o:["Fe-δ (BCC)","Fe-γ (FCC)","Fe-β (HCP)","No cambia de estructura"], c:1, ex:"Entre 912 y 1394 °C el hierro es FCC: austenita, Fe-γ.", b:"Recordar", src:"guía"},
+{t:"Alotropía", q:"La zirconia (ZrO₂) pura puede agrietarse al enfriarse porque:", o:["Se oxida","Cambia de volumen al pasar de tetragonal a monoclínica","Pierde masa","Se vuelve metálica"], c:1, ex:"El cambio de volumen de la transformación genera esfuerzos internos en un cerámico frágil.", b:"Comprender", src:"guía"},
+{t:"Imperfecciones", q:"Una vacancia es:", o:["Un átomo extra en un intersticio","Un sitio de la red que debería estar ocupado y está vacío","Una dislocación","Un límite de grano"], c:1, ex:"Es el defecto puntual más simple: falta un átomo donde debería haber uno.", b:"Recordar", src:"guía"},
+{t:"Imperfecciones", q:"La concentración de vacancias en equilibrio térmico, al subir la temperatura:", o:["Disminuye","No cambia","Aumenta exponencialmente","Solo cambia cerca de la fusión"], c:2, ex:"Nv = N·exp(−Qv/kT): crece exponencialmente con T.", b:"Comprender", src:"guía"},
+{t:"Imperfecciones", q:"El vector de Burgers de una dislocación de borde es:", o:["Paralelo a la línea de dislocación","Perpendicular a la línea de dislocación","Siempre cero","Igual al parámetro de red"], c:1, ex:"En la dislocación helicoidal es paralelo; en la de borde, perpendicular.", b:"Recordar", src:"guía"},
+{t:"Imperfecciones", q:"Según Hume-Rothery, ¿cuál NO favorece una solubilidad sólida sustitucional amplia?", o:["Radios atómicos similares (<15% de diferencia)","Misma estructura cristalina","Electronegatividades muy distintas","Valencias semejantes"], c:2, ex:"Una gran diferencia de electronegatividad favorece formar un compuesto, no una solución sólida.", b:"Analizar", src:"guía"},
+{t:"Imperfecciones", q:"Un átomo de carbono disuelto en hierro ocupa un sitio:", o:["Sustitucional","Intersticial","Vacante","De límite de grano"], c:1, ex:"El C es mucho más pequeño que el Fe y ocupa huecos intersticiales.", b:"Aplicar", src:"guía"},
+{t:"Microestructura", q:"Un número ASTM de tamaño de grano (G) más grande indica:", o:["Granos más grandes","Granos más finos","Más porosidad","Menor dureza"], c:1, ex:"n = 2^(G−1): más granos por área significa granos más pequeños.", b:"Comprender", src:"guía"},
+{t:"Microestructura", q:"El reactivo nital, usado en metalografía de aceros, sirve para:", o:["Pulir la muestra","Revelar los límites de grano por ataque químico","Endurecer el acero","Medir la densidad"], c:1, ex:"Ataca preferentemente los límites de grano y los hace visibles al microscopio.", b:"Comprender", src:"guía"},
+{t:"Microestructura", q:"A temperatura ambiente, un grano más fino generalmente produce:", o:["Mayor límite elástico","Menor límite elástico","Mayor fluencia","Ningún cambio en las propiedades"], c:0, ex:"Más límites de grano implica más barreras al movimiento de dislocaciones (Hall–Petch).", b:"Comprender", src:"guía"},
+{t:"Difusión", q:"La difusión intersticial suele ser más rápida que la de vacancias principalmente porque:", o:["Los átomos intersticiales son más grandes","Casi siempre hay un hueco intersticial vecino vacío","Requiere formar vacancias","Solo ocurre a baja temperatura"], c:1, ex:"No hace falta esperar una vacancia: los intersticios vecinos casi siempre están libres.", b:"Comprender", src:"guía"},
+{t:"Difusión", q:"La primera ley de Fick, J = −D(dC/dx), describe la difusión en:", o:["Estado estacionario","Estado transitorio únicamente","Solo sólidos amorfos","Solo metales líquidos"], c:0, ex:"Aplica cuando el flujo y el perfil de concentración no cambian con el tiempo.", b:"Recordar", src:"guía"},
+{t:"Difusión", q:"Según Arrhenius, D = D0·exp(−Qd/RT): si la temperatura aumenta, el coeficiente D:", o:["Disminuye","Aumenta","No cambia","Depende solo de D0"], c:1, ex:"La difusión se acelera exponencialmente con la temperatura.", b:"Comprender", src:"guía"},
+{t:"Difusión", q:"Con x, Cs y C0 fijos, para lograr la misma Cx con un D menor se necesita:", o:["Menos tiempo","Más tiempo","El mismo tiempo","Es imposible"], c:1, ex:"Dt debe mantenerse constante, así que un D menor exige un tiempo mayor.", b:"Aplicar", src:"guía"},
+{t:"Difusión", q:"La difusión por un límite de grano es más rápida que por el volumen del cristal porque ahí la energía de activación es:", o:["Mayor","Menor","Igual","Depende de la fase"], c:1, ex:"Los límites de grano son regiones de empaquetamiento imperfecto, con menor barrera energética.", b:"Comprender", src:"guía"},
+{t:"Difusión", q:"La cementación de un acero para enriquecerlo en carbono se realiza típicamente en la fase:", o:["Ferrita (Fe-α)","Austenita (Fe-γ)","Cementita","Martensita"], c:1, ex:"La austenita disuelve mucho más carbono que la ferrita: sus huecos octaédricos son más grandes.", b:"Comprender", src:"guía"},
+{t:"Clasificación", q:"En la escalera de escalas de materiales, ¿qué nivel controla directamente las propiedades?", o:["El átomo", "El enlace", "La microestructura", "La aplicación"], c:2, ex:"Según la guía, la microestructura (arreglo cristalino más defectos) es la que controla las propiedades.", b:"Recordar", src:"tarjetas 5"},
+{t:"Clasificación", q:"En la escalera de escalas, ¿qué nivel sigue inmediatamente después del enlace?", o:["Microestructura", "Propiedades", "Aplicación", "Arreglo cristalino"], c:3, ex:"El orden es: átomo, enlace, arreglo cristalino, microestructura, propiedades y aplicación.", b:"Recordar", src:"tarjetas 2"},
+{t:"Clasificación", q:"Según la guía, la microestructura de un material queda determinada por:", o:["El arreglo cristalino y sus defectos", "Únicamente su composición química", "Solo el acabado superficial", "El costo del proceso de fabricación"], c:0, ex:"La microestructura depende del arreglo atómico y de los defectos que lo acompañan.", b:"Comprender", src:"tarjetas 4"},
+{t:"Clasificación", q:"¿Qué combinación de enlaces es típica de los cerámicos?", o:["Metálico únicamente", "Covalente en la cadena y secundario entre cadenas", "Iónico y covalente, entre metal y no metal", "Solo puentes de hidrógeno"], c:2, ex:"Los cerámicos son compuestos metal–no metal con enlaces iónico y covalente.", b:"Comprender", src:"tarjetas 6"},
+{t:"Clasificación", q:"Un polímero termoplástico se ablanda con el calor mucho antes que un cerámico. ¿Qué rasgo de su enlace lo explica mejor?", o:["Entre cadenas solo actúan enlaces secundarios, más débiles que los primarios", "Sus átomos están unidos por enlace metálico", "Sus cadenas se unen por enlaces iónicos fuertes", "No contiene enlaces covalentes"], c:0, ex:"Dentro de la cadena el enlace es covalente, pero entre cadenas hay fuerzas secundarias que ceden primero al subir la temperatura.", b:"Analizar", src:"tarjetas 6,23"},
+{t:"Clasificación", q:"Un recubrimiento para un horno debe ser duro, refractario y aislante eléctrico. ¿Qué familia de materiales encaja mejor?", o:["Metales", "Polímeros termoplásticos", "Cerámicos", "Aleaciones de cobre"], c:2, ex:"Dureza, carácter refractario y aislamiento son rasgos típicos de los cerámicos.", b:"Aplicar", src:"tarjetas 8"},
+{t:"Enlace", q:"La electronegatividad de un átomo mide su tendencia a:", o:["Atraer electrones en un enlace", "Perder electrones con facilidad", "Aumentar su radio atómico", "Fundirse a baja temperatura"], c:0, ex:"Cuanto mayor es la electronegatividad, más fuertemente atrae el átomo los electrones del enlace.", b:"Recordar", src:"tarjetas 10"},
+{t:"Enlace", q:"Un enlace entre dos átomos con diferencia de electronegatividad ΔEN = 1.0 se clasifica como:", o:["Covalente no polar", "Predominantemente iónico", "Metálico", "Covalente polar"], c:3, ex:"ΔEN < 0.4: covalente no polar; 0.4 a 1.7: covalente polar; ΔEN > 1.7: predominantemente iónico.", b:"Aplicar", src:"tarjetas 11"},
+{t:"Enlace", q:"Según la guía, ¿qué puede decirse del carácter iónico de los enlaces?", o:["Los enlaces con ΔEN > 1.7 son 100 % iónicos", "Ningún enlace es 100 % iónico", "El carácter iónico no depende de ΔEN", "Solo los metales presentan carácter iónico"], c:1, ex:"Aun con ΔEN grande, el porcentaje de carácter iónico de Pauling nunca llega a 100 %.", b:"Comprender", src:"tarjetas 12"},
+{t:"Enlace", q:"Con la expresión de Pauling, [1 − exp(−0.25·ΔEN²)] × 100, ¿qué carácter iónico corresponde a ΔEN = 2.0?", o:["≈ 25 %", "≈ 63 %", "≈ 86 %", "≈ 100 %"], c:1, ex:"1 − exp(−0.25·4) = 1 − e⁻¹ ≈ 0.632, es decir, ≈ 63 %.", b:"Aplicar", src:"tarjetas 13"},
+{t:"Enlace", q:"¿Qué ocurre con los electrones en un enlace covalente?", o:["Se transfieren completamente de un átomo a otro", "Se comparten entre los átomos", "Se mueven libres por toda la red de iones", "No participan en el enlace"], c:1, ex:"En el enlace covalente los átomos comparten electrones; en el iónico se transfieren.", b:"Comprender", src:"tarjetas 16"},
+{t:"Enlace", q:"¿Cuál de estas características NO corresponde al enlace iónico?", o:["No direccional", "Fuerte", "Asociado a materiales duros y frágiles", "Responsable de la ductilidad metálica"], c:3, ex:"La ductilidad metálica se debe al enlace metálico, no al iónico.", b:"Comprender", src:"tarjetas 15"},
+{t:"Enlace", q:"¿Cómo se describe el enlace metálico?", o:["Electrones de valencia en una nube compartida alrededor de iones positivos", "Transferencia de electrones del metal al no metal", "Pares de electrones compartidos en direcciones fijas", "Atracción entre dipolos permanentes de moléculas vecinas"], c:0, ex:"La nube de electrones deslocalizados explica la conductividad, la ductilidad y el brillo de los metales.", b:"Recordar", src:"tarjetas 18"},
+{t:"Enlace", q:"Las fuerzas de Keesom son interacciones entre:", o:["Dipolos permanentes", "Un dipolo permanente y uno inducido", "Dipolos inducidos", "Iones y electrones libres"], c:0, ex:"Keesom: permanente–permanente; Debye: permanente–inducido; London: inducido–inducido.", b:"Recordar", src:"tarjetas 19"},
+{t:"Enlace", q:"El puente de hidrógeno es el enlace secundario más intenso. ¿Qué átomos deben estar unidos al hidrógeno?", o:["F, O o N", "Cl, Br o I", "Na, K o Li", "C, S o P"], c:0, ex:"El H debe estar unido a un átomo muy electronegativo y pequeño: F, O o N.", b:"Recordar", src:"tarjetas 20"},
+{t:"Enlace", q:"¿Cuál es el orden correcto de mayor a menor intensidad típica de los enlaces?", o:["Metálico > iónico y covalente > van der Waals > puente de hidrógeno", "Puente de hidrógeno > iónico y covalente > metálico > van der Waals", "Iónico y covalente > metálico > puente de hidrógeno > otras fuerzas de van der Waals", "Otras fuerzas de van der Waals > puente de hidrógeno > metálico > iónico y covalente"], c:2, ex:"Los enlaces primarios superan a los secundarios; entre los secundarios, el puente de hidrógeno es el más intenso.", b:"Comprender", src:"tarjetas 21"},
+{t:"Enlace", q:"La intensidad del enlace metálico varía en un intervalo amplio. ¿Qué par ejemplifica sus extremos?", o:["Tungsteno (muy fuerte) y mercurio (débil)", "Mercurio (muy fuerte) y tungsteno (débil)", "Cobre (fuerte) y aluminio (débil)", "Hierro (fuerte) y tungsteno (débil)"], c:0, ex:"El tungsteno tiene un enlace metálico muy fuerte; el mercurio, uno débil (es líquido a temperatura ambiente).", b:"Comprender", src:"tarjetas 22"},
+{t:"Enlace", q:"En un polímero, los enlaces secundarios controlan principalmente:", o:["La longitud de los enlaces C–C de la cadena", "La interacción entre cadenas", "El número de electrones de valencia del carbono", "La estructura cúbica del material"], c:1, ex:"En sustancias moleculares controlan, por ejemplo, el punto de ebullición; en polímeros, la interacción entre cadenas.", b:"Comprender", src:"tarjetas 23"},
+{t:"Estructuras", q:"La unidad mínima que, repetida en el espacio, genera la red cristalina se llama:", o:["Celda unitaria", "Grano", "Fase", "Dislocación"], c:0, ex:"La celda unitaria es el bloque básico cuya repetición construye todo el cristal.", b:"Recordar", src:"tarjetas 26"},
+{t:"Estructuras", q:"El número de coordinación de un átomo en un cristal es:", o:["El número de vecinos más cercanos", "La fracción del volumen ocupada por átomos", "El número de átomos por celda unitaria", "El número de planos compactos"], c:0, ex:"Es el número de vecinos más cercanos: 6 en CS, 8 en BCC y 12 en FCC y HCP ideal.", b:"Recordar", src:"tarjetas 27"},
+{t:"Estructuras", q:"¿Qué estructura metálica tiene 2 átomos por celda, número de coordinación 8 y FEA de 0.68?", o:["BCC", "FCC", "HCP ideal", "Cúbica simple (CS)"], c:0, ex:"BCC: 2 átomos por celda, coordinación 8 y FEA 0.68.", b:"Aplicar", src:"tarjetas 28"},
+{t:"Estructuras", q:"En la estructura FCC, ¿cómo se relaciona el parámetro de red a con el radio atómico R?", o:["a = 2R", "a = 4R/√3", "a = 2√2·R", "a = 4R"], c:2, ex:"Los átomos se tocan en la diagonal de la cara: 4R = √2·a, de donde a = 2√2·R.", b:"Aplicar", src:"tarjetas 29"},
+{t:"Estructuras", q:"Un metal BCC tiene radio atómico R = 0.125 nm. ¿Cuál es su parámetro de red a?", o:["0.250 nm", "0.354 nm", "0.500 nm", "0.289 nm"], c:3, ex:"BCC: a = 4R/√3 = 0.500/1.732 ≈ 0.289 nm. Los otros valores salen de usar 2R, 2√2·R o 4R.", b:"Aplicar", src:"tarjetas 29"},
+{t:"Estructuras", q:"En una celda HCP ideal con a = 0.320 nm, ¿cuánto vale c?", o:["0.320 nm", "0.523 nm", "0.640 nm", "0.452 nm"], c:1, ex:"En la HCP ideal c = 1.633·a = 1.633 × 0.320 nm ≈ 0.523 nm.", b:"Aplicar", src:"tarjetas 29"},
+{t:"Estructuras", q:"¿A lo largo de qué segmento se tocan los átomos en una celda cúbica simple (CS)?", o:["La arista", "La diagonal de una cara", "La diagonal del cuerpo", "No se tocan"], c:0, ex:"En la CS los átomos se tocan sobre la arista: a = 2R.", b:"Recordar", src:"tarjetas 30"},
+{t:"Estructuras", q:"¿A lo largo de qué segmento se tocan los átomos en una celda FCC?", o:["La arista", "La diagonal de una cara", "La diagonal del cuerpo", "El eje c"], c:1, ex:"En la FCC el contacto ocurre en la diagonal de la cara: 4R = √2·a.", b:"Recordar", src:"tarjetas 32"},
+{t:"Estructuras", q:"El factor de empaquetamiento atómico (FEA) se define como:", o:["El volumen de átomos en la celda entre el volumen de la celda", "El número de vecinos entre los átomos por celda", "La masa de la celda entre su volumen", "El parámetro de red entre el radio atómico"], c:0, ex:"FEA = (volumen de los átomos en la celda) / (volumen de la celda).", b:"Comprender", src:"tarjetas 33"},
+{t:"Estructuras", q:"Para obtener la densidad en g/cm³ con ρ = nA/(Vc·NA), el volumen de la celda debe expresarse en:", o:["nm³", "Å³", "m³", "cm³"], c:3, ex:"Con A en g/mol y NA en átomos/mol, la densidad sale en g/cm³ solo si Vc está en cm³ (1 nm = 10⁻⁷ cm).", b:"Aplicar", src:"tarjetas 35,36"},
+{t:"Estructuras", q:"El aluminio es FCC con R = 0.143 nm y A = 26.98 g/mol. ¿Cuál es su densidad teórica? (NA = 6.022×10²³ átomos/mol)", o:["1.36 g/cm³", "4.97 g/cm³", "2.71 g/cm³", "5.42 g/cm³"], c:2, ex:"a = 2√2·R = 0.4045 nm = 4.045×10⁻⁸ cm; ρ = 4·26.98 / (a³·NA) ≈ 2.71 g/cm³.", b:"Aplicar", src:"tarjetas 35,37,38"},
+{t:"Estructuras", q:"¿Cómo se obtienen los índices [uvw] de una dirección cristalográfica?", o:["Cola menos punta, y se multiplican por el denominador común", "Punta menos cola, y se reducen a los enteros mínimos", "Tomando los recíprocos de las intersecciones", "Sumando las coordenadas de punta y cola"], c:1, ex:"Se resta la cola a la punta y se reducen las componentes a los enteros mínimos.", b:"Recordar", src:"tarjetas 39"},
+{t:"Estructuras", q:"Un vector va del origen (0, 0, 0) al punto (½, 1, 0). ¿Cuál es su dirección [uvw]?", o:["[½ 1 0]", "[0 1 2]", "[2 1 0]", "[1 2 0]"], c:3, ex:"Punta menos cola = (½, 1, 0); se multiplica por 2 para tener enteros mínimos: [1 2 0].", b:"Aplicar", src:"tarjetas 39"},
+{t:"Estructuras", q:"Un plano corta los ejes en x = 1, y = 2 y z = ∞. ¿Cuáles son sus índices de Miller?", o:["(1 2 0)", "(2 1 0)", "(1 2 ∞)", "(0 1 2)"], c:1, ex:"Recíprocos: 1, ½ y 0; se eliminan las fracciones: (2 1 0). El error típico es olvidar los recíprocos.", b:"Aplicar", src:"tarjetas 41"},
+{t:"Estructuras", q:"Si un plano pasa por el origen, para hallar sus índices de Miller se debe:", o:["Asignarle los índices (0 0 0)", "Trasladar el origen", "Dividir entre cero las intersecciones", "Concluir que no admite índices"], c:1, ex:"Se traslada el origen a otro vértice de la celda y se procede con las intersecciones.", b:"Comprender", src:"tarjetas 42"},
+{t:"Alotropía", q:"La capacidad de un material de existir en más de una estructura cristalina se llama:", o:["Polimorfismo", "Isotropía", "Anisotropía", "Amorfismo"], c:0, ex:"Polimorfismo; cuando ocurre en un elemento puro se llama alotropía.", b:"Recordar", src:"tarjetas 43"},
+{t:"Alotropía", q:"¿De qué depende la estructura estable de un material polimórfico?", o:["De la temperatura y la presión", "Del tamaño de grano únicamente", "Del acabado superficial", "Solo de la masa de la pieza"], c:0, ex:"Cada estructura es la más estable en cierto intervalo de temperatura y presión.", b:"Comprender", src:"tarjetas 45"},
+{t:"Alotropía", q:"Al seguir calentando el hierro por encima de 1394 °C, ¿qué ocurre?", o:["Pasa a Fe-δ (BCC) hasta fundirse a 1538 °C", "Sigue siendo Fe-γ (FCC) hasta fundirse", "Se transforma en HCP", "Se vuelve amorfo antes de fundir"], c:0, ex:"Fe-α es BCC hasta 912 °C; Fe-γ es FCC entre 912 y 1394 °C; Fe-δ es BCC hasta la fusión.", b:"Comprender", src:"tarjetas 46"},
+{t:"Alotropía", q:"El estaño blanco es tetragonal centrado en el cuerpo. ¿Qué estructura tiene el estaño gris?", o:["FCC compacta", "Cúbica tipo diamante", "HCP", "Cúbica simple"], c:1, ex:"El estaño gris es cúbico tipo diamante; el cambio entre ambas formas está detrás de la «peste del estaño».", b:"Recordar", src:"tarjetas 47"},
+{t:"Alotropía", q:"¿Cuáles son las formas polimórficas del SiO₂ mencionadas en la guía?", o:["Monoclínica, tetragonal y cúbica", "Grafito, diamante y fullereno", "Cuarzo, tridimita y cristobalita", "Fe-α, Fe-γ y Fe-δ"], c:2, ex:"El SiO₂ presenta cuarzo, tridimita y cristobalita; las formas monoclínica, tetragonal y cúbica son del ZrO₂.", b:"Recordar", src:"tarjetas 48"},
+{t:"Alotropía", q:"¿Por qué se compara el volumen por átomo al evaluar un cambio entre estructuras cristalinas?", o:["Porque la masa se conserva en la transformación", "Porque el número de átomos siempre se duplica", "Porque la temperatura permanece constante", "Porque el parámetro de red es el mismo"], c:0, ex:"Como la masa no cambia, comparar el volumen por átomo muestra si el material se expande o se contrae.", b:"Comprender", src:"tarjetas 49"},
+{t:"Alotropía", q:"¿Qué diferencia de solubilidad del carbono sustenta los tratamientos térmicos del acero?", o:["El C es mucho más soluble en Fe-α que en Fe-γ", "El C es igual de soluble en ambas fases", "El C no se disuelve en ninguna fase del hierro", "El C es mucho más soluble en Fe-γ que en Fe-α"], c:3, ex:"La austenita (Fe-γ) disuelve mucho más carbono que la ferrita (Fe-α); de ahí parten el temple y la cementación.", b:"Comprender", src:"tarjetas 51"},
+{t:"Imperfecciones", q:"Una dislocación es un defecto cristalino de dimensionalidad:", o:["0D (puntual)", "1D (lineal)", "2D (superficial)", "3D (volumétrico)"], c:1, ex:"Puntual: vacancia o intersticial; lineal: dislocaciones; superficial: límite de grano, macla; volumétrico: poro, grieta, inclusión.", b:"Recordar", src:"tarjetas 52"},
+{t:"Imperfecciones", q:"Una inclusión de MnS en un acero es un defecto:", o:["Puntual (0D)", "Lineal (1D)", "Superficial (2D)", "Volumétrico (3D)"], c:3, ex:"Las inclusiones, poros, grietas y segundas fases son defectos volumétricos (3D).", b:"Comprender", src:"tarjetas 58"},
+{t:"Imperfecciones", q:"En Nv = N·exp(−Qv/kT), ¿qué representa Qv?", o:["El número de sitios atómicos por unidad de volumen", "La energía necesaria para formar una vacancia", "La constante de Boltzmann", "La temperatura de fusión del material"], c:1, ex:"Qv es la energía de activación para formar una vacancia; k es la constante de Boltzmann y N, el número de sitios.", b:"Comprender", src:"tarjetas 53"},
+{t:"Imperfecciones", q:"Con N = ρ·NA/A, ¿cuántos sitios atómicos por cm³ tiene el níquel (ρ = 8.90 g/cm³, A = 58.69 g/mol)?", o:["1.03×10²² cm⁻³", "3.97×10²⁴ cm⁻³", "9.13×10²² cm⁻³", "8.67×10⁻²² cm⁻³"], c:2, ex:"N = (8.90 × 6.022×10²³) / 58.69 ≈ 9.13×10²² cm⁻³. Olvidar ρ o invertir la fórmula da los otros valores.", b:"Aplicar", src:"tarjetas 55"},
+{t:"Imperfecciones", q:"Un metal tiene Qv = 0.90 eV. Con k = 8.62×10⁻⁵ eV/K, ¿cuál es la fracción de vacancias Nv/N a 800 °C?", o:["≈ 2.15×10⁻⁶", "≈ 5.95×10⁻⁵", "≈ 0.407", "≈ 1.68×10⁴"], c:1, ex:"T = 1073 K; Nv/N = exp(−0.90 / (8.62×10⁻⁵ × 1073)) ≈ 5.95×10⁻⁵. Usar 800 en lugar de 1073 K da 2.15×10⁻⁶.", b:"Aplicar", src:"tarjetas 53,56"},
+{t:"Imperfecciones", q:"En una solución sólida sustitucional, el átomo de soluto:", o:["Ocupa sitios de la red del solvente", "Ocupa huecos entre los átomos del solvente", "Forma siempre un compuesto distinto", "Se localiza solo en los límites de grano"], c:0, ex:"Sustitucional: ocupa sitios de la red; intersticial: ocupa huecos entre los átomos.", b:"Comprender", src:"tarjetas 59"},
+{t:"Imperfecciones", q:"¿Cuál de los siguientes átomos es un soluto intersticial típico en metales?", o:["Nitrógeno", "Cobre", "Plata", "Níquel"], c:0, ex:"Los solutos intersticiales son átomos pequeños: C, N, H y O.", b:"Comprender", src:"tarjetas 60,61"},
+{t:"Imperfecciones", q:"¿Basta cumplir las reglas de Hume–Rothery para garantizar amplia solubilidad sustitucional?", o:["Sí, siempre que haya misma valencia", "Sí, las cuatro reglas son suficientes", "No: la favorecen, pero por sí solas no la garantizan", "No: solo importa la diferencia de radios"], c:2, ex:"Radios similares (<15 %), misma estructura, electronegatividades y valencias semejantes favorecen la solubilidad, pero no la aseguran.", b:"Comprender", src:"tarjetas 63"},
+{t:"Imperfecciones", q:"En FCC el hueco octaédrico mide 0.414·R. Si R = 0.128 nm, ¿qué radio máximo puede tener un átomo intersticial en él?", o:["≈ 0.020 nm", "≈ 0.037 nm", "≈ 0.053 nm", "≈ 0.128 nm"], c:2, ex:"0.414 × 0.128 nm ≈ 0.053 nm. Los 0.037 nm corresponden al hueco tetraédrico BCC (0.291R) y 0.020 nm al octaédrico BCC (0.155R).", b:"Aplicar", src:"tarjetas 64"},
+{t:"Imperfecciones", q:"De los huecos intersticiales citados en la guía, ¿cuál es el más pequeño en relación con R?", o:["FCC, octaédrico (0.414R)", "BCC, tetraédrico (0.291R)", "BCC, octaédrico (0.155R)", "Todos miden lo mismo"], c:2, ex:"El hueco octaédrico de la BCC (0.155R) es el menor; por eso el C cabe mejor en FCC (austenita) que en BCC (ferrita).", b:"Analizar", src:"tarjetas 64"},
+{t:"Imperfecciones", q:"En una dislocación helicoidal, el vector de Burgers es ___ a la línea de dislocación:", o:["Perpendicular", "Paralelo", "Oblicuo a 45°", "Nulo"], c:1, ex:"Helicoidal: paralelo; de borde: perpendicular.", b:"Recordar", src:"tarjetas 67"},
+{t:"Microestructura", q:"¿Cuál de los siguientes NO forma parte de la microestructura observable con microscopio?", o:["El color de la pintura exterior de la pieza", "Fases, su proporción y distribución", "Porosidad e inclusiones", "Tamaño y forma de grano"], c:0, ex:"La microestructura incluye grano, fases, porosidad e inclusiones; el acabado exterior no es microestructura.", b:"Comprender", src:"tarjetas 68"},
+{t:"Microestructura", q:"¿Cuál es el orden correcto de la preparación metalográfica?", o:["Corte, montaje, desbaste, pulido a espejo y ataque químico", "Montaje, corte, pulido, desbaste y ataque químico", "Corte, ataque químico, desbaste, montaje y pulido", "Pulido, corte, montaje, ataque químico y desbaste"], c:0, ex:"Corte, montaje, desbaste con abrasivos cada vez más finos, pulido a espejo y, al final, ataque químico.", b:"Recordar", src:"tarjetas 69"},
+{t:"Microestructura", q:"A 100×, el número de granos por pulgada cuadrada es n = 2^(G−1). Si G = 6, ¿cuántos granos por pulgada cuadrada hay?", o:["12", "32", "64", "6"], c:1, ex:"n = 2^(6−1) = 2⁵ = 32 granos por pulgada cuadrada.", b:"Aplicar", src:"tarjetas 73"},
+{t:"Microestructura", q:"A 200× se cuentan 16 granos por pulgada cuadrada. ¿Cuál es el número de tamaño de grano ASTM G? (n·(M/100)² = 2^(G−1))", o:["G = 3", "G = 5", "G = 6", "G = 7"], c:3, ex:"A 100× serían 16·(200/100)² = 64 granos/pulg²; 2^(G−1) = 64 → G = 7.", b:"Aplicar", src:"tarjetas 74"},
+{t:"Microestructura", q:"A temperatura ambiente, un grano fino generalmente:", o:["Aumenta la resistencia y la tenacidad", "Disminuye la resistencia y la tenacidad", "Aumenta la resistencia pero reduce la tenacidad", "No modifica ninguna de las dos"], c:0, ex:"Más límites de grano frenan las dislocaciones y dificultan la propagación de grietas: sube la resistencia y también la tenacidad.", b:"Comprender", src:"tarjetas 76"},
+{t:"Microestructura", q:"Dos lotes del mismo aluminio tienen G = 4 (lote A) y G = 8 (lote B). Para una pieza que requiere mayor resistencia a temperatura ambiente, ¿cuál recomendarías y por qué?", o:["El lote A, porque los granos grandes bloquean mejor las dislocaciones", "Cualquiera, porque G no afecta la resistencia", "El lote B, porque su grano más fino tiene más límites que frenan dislocaciones", "El lote A, porque con menos límites de grano es más resistente"], c:2, ex:"Un G mayor significa grano más fino y más límites de grano, que obstaculizan el movimiento de dislocaciones.", b:"Evaluar", src:"tarjetas 75,76"},
+{t:"Difusión", q:"La difusión en materiales es:", o:["Transporte de masa por movimiento atómico", "Deformación plástica por movimiento de dislocaciones", "Transporte de calor únicamente por radiación", "Un cambio de fase sin movimiento de átomos"], c:0, ex:"Es el transporte de masa a escala atómica.", b:"Recordar", src:"tarjetas 77"},
+{t:"Difusión", q:"En la difusión por vacancias, un átomo se mueve:", o:["Saltando entre huecos intersticiales", "Saltando a una vacancia vecina", "Deslizándose sobre un plano de dislocaciones", "Girando sin cambiar de posición"], c:1, ex:"El átomo salta a una vacancia contigua; la vacancia se mueve en sentido contrario.", b:"Comprender", src:"tarjetas 78"},
+{t:"Difusión", q:"¿Qué átomos difunden típicamente por el mecanismo intersticial?", o:["Átomos pequeños como C, N o H", "Átomos del mismo tamaño que el solvente", "Solo los átomos del propio solvente", "Átomos grandes como Pb o Sn"], c:0, ex:"Solo los átomos pequeños (C, N, H) pueden saltar de hueco a hueco sin desplazar a los de la red.", b:"Comprender", src:"tarjetas 79"},
+{t:"Difusión", q:"En J = −D(dC/dx), ¿qué indica el signo negativo?", o:["Que el flujo va de mayor a menor concentración", "Que el flujo va de menor a mayor concentración", "Que D es negativo", "Que la difusión absorbe calor"], c:0, ex:"El flujo sigue el sentido contrario al gradiente: de la zona más concentrada a la menos concentrada.", b:"Comprender", src:"tarjetas 82"},
+{t:"Difusión", q:"En estado estacionario, D = 3×10⁻¹¹ m²/s y el gradiente de concentración es dC/dx = −500 kg/m⁴. ¿Cuál es el flujo J?", o:["1.5×10⁻⁸ kg/(m²·s)", "−1.5×10⁻⁸ kg/(m²·s)", "1.5×10⁻¹⁴ kg/(m²·s)", "6.0×10¹² kg/(m²·s)"], c:0, ex:"J = −D·(dC/dx) = −(3×10⁻¹¹)(−500) = 1.5×10⁻⁸ kg/(m²·s); es positivo porque el gradiente es negativo.", b:"Aplicar", src:"tarjetas 81"},
+{t:"Difusión", q:"Para un sólido semiinfinito con concentración superficial constante Cs, la razón (Cx − C0)/(Cs − C0) es igual a:", o:["erf( x / (2√(Dt)) )", "1 − erf( x / (2√(Dt)) )", "exp( −x / √(Dt) )", "1 / (1 + x/√(Dt))"], c:1, ex:"Es la solución de la segunda ley de Fick: 1 − erf(z), con z = x/(2√(Dt)).", b:"Recordar", src:"tarjetas 84"},
+{t:"Difusión", q:"¿Cuál es el procedimiento correcto para resolver un problema de difusión no estacionaria con la función error?", o:["z en la tabla → razón de concentraciones → erf(z) → despejar la incógnita", "erf(z) → despejar la incógnita → z en la tabla → razón de concentraciones", "Razón de concentraciones → erf(z) → z en la tabla → despejar la incógnita de z = x/(2√(Dt))", "Despejar la incógnita → razón de concentraciones → erf(z) → z en la tabla"], c:2, ex:"Primero la razón adimensional, luego erf(z) = 1 − razón, después z en la tabla (interpolando) y al final se despeja x, D o t.", b:"Comprender", src:"tarjetas 85"},
+{t:"Difusión", q:"Un acero con C0 = 0.10 %C se cementa con Cs = 1.00 %C. ¿Cuánto vale z = x/(2√(Dt)) en la profundidad donde Cx = 0.40 %C? (usa la tabla de erf)", o:["z ≈ 0.30", "z ≈ 0.60", "z ≈ 0.68", "z ≈ 1.10"], c:2, ex:"(Cx − C0)/(Cs − C0) = 0.30/0.90 = 0.333 → erf(z) = 1 − 0.333 = 0.667 → z ≈ 0.68. Olvidar restar C0 da 0.60 y confundir erf(z) con la razón da 0.30.", b:"Aplicar", src:"tarjetas 84,85"},
+{t:"Difusión", q:"Un acero se cementa 8 h a 900 °C (D = 5.9×10⁻¹² m²/s). Para obtener el mismo perfil de carbono a 1000 °C (D = 1.94×10⁻¹¹ m²/s), ¿cuánto debe durar el tratamiento?", o:["≈ 26 h", "≈ 8 h", "≈ 4.4 h", "≈ 2.4 h"], c:3, ex:"Dt = constante: t₂ = t₁·D₁/D₂ = 8 h × 5.9×10⁻¹² / 1.94×10⁻¹¹ ≈ 2.4 h.", b:"Aplicar", src:"tarjetas 86"},
+{t:"Difusión", q:"Un compañero afirma: «si duplico el tiempo de cementación, la profundidad con la misma concentración también se duplica». ¿Qué opinas?", o:["Es correcta: la profundidad es proporcional a t", "Es incorrecta: no depende del tiempo", "Es correcta: la profundidad es proporcional a D", "Es incorrecta: crece con √t, solo ≈ 1.41 veces"], c:3, ex:"Con z constante, x = 2z·√(Dt): al duplicar t, x aumenta √2 ≈ 1.41 veces.", b:"Evaluar", src:"tarjetas 84,86"},
+{t:"Difusión", q:"En una gráfica de ln D contra 1/T, ¿cuánto vale la pendiente?", o:["Qd/R", "−Qd/R", "−D0", "R/Qd"], c:1, ex:"De ln D = ln D0 − (Qd/R)(1/T) se obtiene pendiente −Qd/R y ordenada ln D0.", b:"Comprender", src:"tarjetas 88"},
+{t:"Difusión", q:"¿Cuál de los siguientes NO es un factor que afecta la difusión?", o:["La temperatura", "La estructura cristalina", "Las trayectorias rápidas como límites de grano", "El color del material"], c:3, ex:"Influyen la temperatura, la especie que difunde y la matriz, la estructura y las trayectorias rápidas; el color no.", b:"Comprender", src:"tarjetas 91"},
+{t:"Difusión", q:"¿Qué estructuras cristalinas permiten generalmente una difusión más rápida?", o:["Las más compactas", "Las menos compactas", "Solo las de FEA = 0.74", "Ninguna: la estructura no influye"], c:1, ex:"En estructuras menos compactas hay más espacio libre y menor barrera para los saltos atómicos.", b:"Comprender", src:"tarjetas 92"},
+{t:"Difusión", q:"Para el carbono en Fe-γ, D0 = 2.3×10⁻⁵ m²/s y Qd = 148 kJ/mol. ¿Cuánto vale D a 925 °C? (R = 8.314 J/mol·K)", o:["≈ 1.0×10⁻¹³ m²/s", "≈ 2.3×10⁻⁵ m²/s", "≈ 8.1×10⁻¹² m²/s", "≈ 1.9×10⁻¹¹ m²/s"], c:2, ex:"T = 1198 K; D = 2.3×10⁻⁵·exp(−148000/(8.314·1198)) ≈ 8.1×10⁻¹² m²/s. Usar °C da ≈ 1.0×10⁻¹³ y usar kJ sin convertir da casi D0.", b:"Aplicar", src:"tarjetas 87,94"}
+];
+
+var TOPICS = ["Clasificación","Enlace","Estructuras","Alotropía","Imperfecciones","Microestructura","Difusión"];
+
+/* ============================== UTILIDADES ============================== */
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function seedFromCode(pin, count, duration){
+  var str = String(pin) + "-" + String(count) + "-" + String(duration);
+  var h = 0;
+  for (var i=0;i<str.length;i++){ h = (Math.imul(31,h) + str.charCodeAt(i)) | 0; }
+  return h;
+}
+function buildSet(pin, count, duration){
+  var rnd = mulberry32(seedFromCode(pin, count, duration));
+  var idx = BANK.map(function(_,i){ return i; });
+  for (var i=idx.length-1;i>0;i--){
+    var j = Math.floor(rnd()* (i+1));
+    var tmp = idx[i]; idx[i]=idx[j]; idx[j]=tmp;
+  }
+  var n = count === "all" ? BANK.length : Math.min(count, BANK.length);
+  return idx.slice(0, n).map(function(i){ return BANK[i]; });
+}
+function calcScore(correct, elapsedMs, durationMs){
+  if (!correct) return 0;
+  var frac = Math.max(0, Math.min(1, 1 - (elapsedMs/durationMs)));
+  return Math.round(500 + 500*frac);
+}
+function tier(pct){
+  if (pct >= 90) return "Metalúrgico experto";
+  if (pct >= 75) return "Ingeniero de materiales";
+  if (pct >= 60) return "Aprendiz de cristalógrafo";
+  if (pct >= 40) return "Explorador de la celda unitaria";
+  return "Sigue practicando";
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function randPin(){ return String(1000 + Math.floor(Math.random()*9000)); }
+
+var SHAPES = [
+  '<svg class="shape" viewBox="0 0 24 24"><polygon points="12,2 22,21 2,21" fill="#121416"/></svg>',
+  '<svg class="shape" viewBox="0 0 24 24"><polygon points="12,1 23,12 12,23 1,12" fill="#121416"/></svg>',
+  '<svg class="shape" viewBox="0 0 24 24"><polygon points="12,1 21,6.5 21,17.5 12,23 3,17.5 3,6.5" fill="#121416"/></svg>',
+  '<svg class="shape" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3" fill="#121416"/></svg>'
+];
+var LETTERS = ["A","B","C","D"];
+
+function ringSVG(size, strokeFrac){
+  var r = (size/2) - 9;
+  var c = 2*Math.PI*r;
+  return '<svg viewBox="0 0 '+size+' '+size+'">'+
+    '<circle class="ring-bg" cx="'+size/2+'" cy="'+size/2+'" r="'+r+'"></circle>'+
+    '<circle id="ringFg" class="ring-fg" cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" '+
+      'stroke-dasharray="'+c+'" stroke-dashoffset="0"></circle>'+
+    '</svg>';
+}
+
+function confettiBurst(){
+  var host = document.createElement("div");
+  host.className = "confetti";
+  var cols = ["var(--ember)","var(--cyan)","var(--emerald)","var(--brass)"];
+  for (var i=0;i<36;i++){
+    var s = document.createElement("span");
+    s.style.left = (Math.random()*100)+"vw";
+    s.style.background = cols[i%cols.length];
+    s.style.animationDuration = (2.6+Math.random()*1.8)+"s";
+    s.style.animationDelay = (Math.random()*0.6)+"s";
+    host.appendChild(s);
+  }
+  document.body.appendChild(host);
+  setTimeout(function(){ host.remove(); }, 4600);
+}
+
+/* ============================== ESTADO ============================== */
+var App = {
+  screen: "landing",
+  host: { pin:"", count:15, duration:20, qset:[], idx:0, started:false, answered:0, roster:[] },
+  player: { pin:"", count:15, duration:20, name:"", qset:[], idx:0, score:0, qStart:0, chosen:null, chosenAt:null, locked:false, revealed:false, results:[] },
+  timers: {}
+};
+
+function clearTimers(){
+  Object.keys(App.timers).forEach(function(k){ clearInterval(App.timers[k]); clearTimeout(App.timers[k]); });
+  App.timers = {};
+}
+function go(screen){ clearTimers(); App.screen = screen; render(); }
+
+/* ============================== PANTALLAS ============================== */
+
+function screenLanding(){
+  return '' +
+  '<div class="wrap">' +
+    '<p class="eyebrow">IMEC1402 · Ciencia e Ingeniería de Materiales</p>' +
+    '<h1 class="hero">Reto de Materiales</h1>' +
+    '<p class="sub">Un juego de preguntas rápidas para repasar estructura cristalina, defectos, microestructura y difusión — a tu propio ritmo, siguiendo a tu profesor.</p>' +
+    '<div class="landing-grid">' +
+      '<button class="mode-card" onclick="UI.toHostSetup()">' +
+        '<svg class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="var(--ember)" stroke-width="1.6"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>' +
+        '<h3>Proyectar en clase</h3>' +
+        '<p>Para el profesor: muestra las preguntas en el pizarrón electrónico y marca el ritmo.</p>' +
+      '</button>' +
+      '<button class="mode-card" onclick="UI.toPlayerJoin()">' +
+        '<svg class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.6"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>' +
+        '<h3>Jugar desde mi celular</h3>' +
+        '<p>Para alumnos: ingresa el código que diga tu profesor y responde desde tu propio dispositivo.</p>' +
+      '</button>' +
+    '</div>' +
+    '<p class="footnote">Cada quien responde en su propio dispositivo y lleva su propio puntaje — no necesitas iniciar sesión ni instalar nada.</p>' +
+  '</div>';
+}
+
+/* ---- HOST ---- */
+function screenHostSetup(){
+  var h = App.host;
+  var counts = [10,15,20,30,"all"];
+  var durs = [10,20,30];
+  return '' +
+  '<div class="wrap-narrow">' +
+    '<p class="eyebrow">Modo profesor</p>' +
+    '<h1 class="hero" style="font-size:1.8rem;">Crear una partida</h1>' +
+    '<div class="panel">' +
+      '<label class="field"><span>Código de partida (dilo en voz alta a tus alumnos)</span>' +
+        '<div class="row">' +
+          '<input class="input mono" style="flex:1" id="pinInput" maxlength="4" inputmode="numeric" value="'+h.pin+'" oninput="UI.hostPinInput(this.value)">' +
+          '<button class="btn secondary" onclick="UI.regenPin()">Generar</button>' +
+        '</div>' +
+      '</label>' +
+      '<label class="field"><span>Número de preguntas</span>' +
+        '<div class="chips" id="countChips">' +
+          counts.map(function(c){
+            var label = c==="all" ? "Todas ("+BANK.length+")" : c;
+            return '<button class="chip'+(h.count===c?' active':'')+'" onclick="UI.setCount(\''+c+'\')">'+label+'</button>';
+          }).join('') +
+        '</div>' +
+      '</label>' +
+      '<label class="field"><span>Segundos por pregunta</span>' +
+        '<div class="chips">' +
+          durs.map(function(d){
+            return '<button class="chip'+(h.duration===d?' active':'')+'" onclick="UI.setDuration('+d+')">'+d+'s</button>';
+          }).join('') +
+        '</div>' +
+      '</label>' +
+      '<button class="btn wide lg" onclick="UI.createGame()">Crear partida</button>' +
+    '</div>' +
+    '<p class="footnote"><span class="linklike" onclick="go(\'landing\')">← Volver</span></p>' +
+  '</div>';
+}
+
+function screenHostReady(){
+  var h = App.host;
+  var label = h.count==="all" ? BANK.length : h.count;
+  return '' +
+  '<div class="wrap-narrow">' +
+    '<p class="eyebrow">Partida lista</p>' +
+    '<h1 class="hero" style="font-size:1.6rem;">Dicta estos datos a tus alumnos</h1>' +
+    '<div class="panel" style="text-align:center;">' +
+      '<p style="color:var(--text-dim); margin-bottom:6px;">Código</p>' +
+      '<p class="pin" style="font-size:3rem; margin:0 0 18px;">'+h.pin+'</p>' +
+      '<div class="row" style="justify-content:center;">' +
+        '<span class="badge">'+label+' preguntas</span>' +
+        '<span class="badge">'+h.duration+'s por pregunta</span>' +
+      '</div>' +
+      '<p class="footnote" style="margin-top:22px;">Cada alumno entra a este mismo enlace, elige "Jugar desde mi celular" e ingresa este código, el mismo número de preguntas y su nombre.</p>' +
+      '<button class="btn wide lg" style="margin-top:18px;" onclick="UI.hostStartQuestion()">Comenzar pregunta 1</button>' +
+    '</div>' +
+    '<p class="footnote"><span class="linklike" onclick="go(\'hostSetup\')">← Cambiar configuración</span></p>' +
+  '</div>';
+}
+
+function tilesHTML(q, opts){
+  opts = opts || {};
+  return '<div class="tiles">' + q.o.map(function(opt, i){
+    var cls = "tile t"+i;
+    if (opts.revealed){
+      if (i === q.c) cls += " correct"; else cls += " incorrect";
+    } else if (opts.selectedIndex === i){
+      cls += " selected";
+    }
+    var disabled = opts.disabled ? "disabled" : "";
+    var onclick = opts.onTap ? ' onclick="'+opts.onTap+'('+i+')"' : '';
+    return '<button class="'+cls+'" '+disabled+onclick+'>'+SHAPES[i]+escapeHtml(opt)+'</button>';
+  }).join('') + '</div>';
+}
+
+function screenHostQuestion(){
+  var h = App.host;
+  var q = h.qset[h.idx];
+  var total = h.qset.length;
+  var dots = h.qset.map(function(_,i){
+    var cls = "dot" + (i < h.idx ? " done" : (i===h.idx ? " now":""));
+    return '<div class="'+cls+'"></div>';
+  }).join('');
+  return '' +
+  '<div class="wrap">' +
+    '<div class="topbar"><span>Código <span class="mono pin" style="font-size:.95rem;">'+h.pin+'</span></span><span class="mono">Pregunta '+(h.idx+1)+' / '+total+'</span></div>' +
+    '<div class="dots">'+dots+'</div>' +
+    '<div class="panel" style="margin-top:14px;">' +
+      '<div class="ring-wrap" id="ringWrap">'+ringSVG(118)+'<div class="ring-num mono" id="ringNum">'+h.duration+'</div></div>' +
+      '<p class="qtext" style="text-align:center;">'+escapeHtml(q.q)+'</p>' +
+      tilesHTML(q, {disabled:true}) +
+      '<div class="row" style="justify-content:center; margin-top:22px;">' +
+        '<button class="btn secondary" onclick="UI.hostReveal()">Revelar respuesta</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function screenHostReveal(){
+  var h = App.host;
+  var q = h.qset[h.idx];
+  var total = h.qset.length;
+  var isLast = h.idx === total-1;
+  return '' +
+  '<div class="wrap">' +
+    '<div class="topbar"><span>Código <span class="mono pin" style="font-size:.95rem;">'+h.pin+'</span></span><span class="mono">Pregunta '+(h.idx+1)+' / '+total+'</span></div>' +
+    '<div class="panel" style="margin-top:14px;">' +
+      '<p class="qtext" style="text-align:center;">'+escapeHtml(q.q)+'</p>' +
+      tilesHTML(q, {revealed:true, disabled:true}) +
+      '<div class="explain">'+escapeHtml(q.ex)+'</div>' +
+      '<div class="row" style="justify-content:center; margin-top:22px;">' +
+        '<button class="btn lg" onclick="UI.hostNext()">'+(isLast ? "Ver cierre" : "Siguiente pregunta")+'</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function screenHostFinal(){
+  var h = App.host;
+  var covered = TOPICS.filter(function(t){ return h.qset.some(function(q){ return q.t===t; }); });
+  return '' +
+  '<div class="wrap" style="text-align:center;">' +
+    '<p class="eyebrow">Partida terminada</p>' +
+    '<h1 class="hero">Buen trabajo, grupo</h1>' +
+    '<p class="sub" style="margin-left:auto;margin-right:auto;">Repasaron '+h.qset.length+' preguntas sobre: '+covered.join(" · ")+'.</p>' +
+    '<div class="panel">' +
+      '<p style="color:var(--text-dim);">Cada alumno ya puede ver su puntaje final en su propio celular.</p>' +
+      '<button class="btn wide lg" style="margin-top:16px;" onclick="UI.toHostSetup()">Nueva partida</button>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ---- PLAYER ---- */
+function screenPlayerJoin(){
+  var p = App.player;
+  var counts = [10,15,20,30,"all"];
+  var durs = [10,20,30];
+  return '' +
+  '<div class="wrap-narrow">' +
+    '<p class="eyebrow">Modo alumno</p>' +
+    '<h1 class="hero" style="font-size:1.8rem;">Unirme a la partida</h1>' +
+    '<div class="panel">' +
+      '<label class="field"><span>Código que te dio tu profesor</span>' +
+        '<input class="input mono" maxlength="4" inputmode="numeric" id="pPin" value="'+p.pin+'" placeholder="0000" oninput="UI.pPinInput(this.value)">' +
+      '</label>' +
+      '<label class="field"><span>Número de preguntas (el mismo que anunció tu profesor)</span>' +
+        '<div class="chips">' +
+          counts.map(function(c){
+            var label = c==="all" ? "Todas ("+BANK.length+")" : c;
+            return '<button class="chip'+(p.count===c?' active':'')+'" onclick="UI.pSetCount(\''+c+'\')">'+label+'</button>';
+          }).join('') +
+        '</div>' +
+      '</label>' +
+      '<label class="field"><span>Segundos por pregunta (el mismo que anunció tu profesor)</span>' +
+        '<div class="chips">' +
+          durs.map(function(d){
+            return '<button class="chip'+(p.duration===d?' active':'')+'" onclick="UI.pSetDuration('+d+')">'+d+'s</button>';
+          }).join('') +
+        '</div>' +
+      '</label>' +
+      '<label class="field"><span>Tu nombre</span>' +
+        '<input class="input name" id="pName" maxlength="24" value="'+escapeHtml(p.name)+'" placeholder="Como quieres que aparezca" oninput="UI.pNameInput(this.value)">' +
+      '</label>' +
+      '<button class="btn wide lg" onclick="UI.playerJoin()">Entrar</button>' +
+    '</div>' +
+    '<p class="footnote"><span class="linklike" onclick="go(\'landing\')">← Volver</span></p>' +
+  '</div>';
+}
+
+function screenPlayerReady(){
+  var p = App.player;
+  return '' +
+  '<div class="wrap-narrow" style="text-align:center;">' +
+    '<p class="eyebrow">Listo, '+escapeHtml(p.name)+'</p>' +
+    '<h1 class="hero" style="font-size:1.6rem;">Esperando a tu profesor</h1>' +
+    '<div class="panel">' +
+      '<div class="row" style="justify-content:center;">' +
+        '<span class="badge">Código <span class="mono">'+p.pin+'</span></span>' +
+        '<span class="badge">'+(p.count==="all"?BANK.length:p.count)+' preguntas</span>' +
+      '</div>' +
+      '<p class="footnote" style="margin-top:18px;">Cuando tu profesor proyecte la Pregunta 1 y diga "comiencen", pulsa el botón.</p>' +
+      '<button class="btn wide lg" style="margin-top:14px;" onclick="UI.playerStartQuestion()">Comenzar pregunta 1</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function screenPlayerQuestion(){
+  var p = App.player;
+  var q = p.qset[p.idx];
+  var total = p.qset.length;
+  var locked = p.locked;
+  var dots = p.qset.map(function(_,i){
+    var cls = "dot" + (i < p.idx ? " done" : (i===p.idx ? " now":""));
+    return '<div class="'+cls+'"></div>';
+  }).join('');
+  var body = '';
+  if (!p.revealed){
+    body = tilesHTML(q, { disabled: locked, selectedIndex: p.chosen, onTap: locked ? "" : "UI.playerAnswer" }) +
+      (locked ? '<p class="footnote" style="text-align:center; margin-top:16px;">Respuesta registrada: '+LETTERS[p.chosen]+'. Cuando tu profesor diga "revelen", pulsa el botón.</p>' +
+                '<div class="row" style="justify-content:center; margin-top:6px;">' +
+                  '<button class="btn lg" onclick="UI.playerReveal()">Revelar resultado</button>' +
+                '</div>'
+              : '<p class="footnote" style="text-align:center; margin-top:14px;">Toca una opción.</p>');
+  } else {
+    var correct = p.chosen === q.c;
+    var pts = calcScore(correct, p.chosenAt==null ? q._duration : p.chosenAt, q._duration);
+    body = tilesHTML(q, {revealed:true, disabled:true}) +
+      '<div class="feedback">' +
+        '<p class="big" style="color:'+(correct?'var(--emerald)':'var(--crimson)')+';">'+(correct?'¡Correcto!':(p.chosen==null?'Sin respuesta':'Incorrecto'))+'</p>' +
+        '<p class="pts">+'+pts+' pts</p>' +
+      '</div>' +
+      '<div class="explain">'+escapeHtml(q.ex)+'</div>' +
+      '<div class="scorebar"><div class="item"><div class="v">'+p.score+'</div><div class="l">puntaje total</div></div></div>' +
+      '<div class="row" style="justify-content:center;">' +
+        '<button class="btn lg" onclick="UI.playerNext()">'+(p.idx===total-1 ? "Ver mi resultado final" : "Siguiente pregunta")+'</button>' +
+      '</div>';
+  }
+  return '' +
+  '<div class="wrap-narrow">' +
+    '<div class="topbar"><span class="mono">'+p.score+' pts</span><span class="mono">Pregunta '+(p.idx+1)+' / '+total+'</span></div>' +
+    '<div class="dots">'+dots+'</div>' +
+    (p.revealed ? '' : '<div class="ring-wrap sm" id="ringWrap">'+ringSVG(84)+'<div class="ring-num mono" id="ringNum">'+Math.floor(q._duration/1000)+'</div></div>') +
+    '<p class="qtext small">'+escapeHtml(q.q)+'</p>' +
+    body +
+  '</div>';
+}
+
+function screenPlayerFinal(){
+  var p = App.player;
+  var total = p.qset.length;
+  var correctCount = p.results.filter(function(r){return r;}).length;
+  var pct = Math.round(100*correctCount/total);
+  setTimeout(confettiBurst, 50);
+  var shareText = "Obtuve "+p.score+" pts ("+correctCount+"/"+total+" correctas) en el Reto de Materiales de IMEC1402.";
+  return '' +
+  '<div class="wrap-narrow" style="text-align:center;">' +
+    '<p class="eyebrow">'+escapeHtml(p.name)+', terminaste</p>' +
+    '<h1 class="hero" style="font-size:2rem;">'+p.score+' pts</h1>' +
+    '<p class="tier">'+tier(pct)+'</p>' +
+    '<div class="panel">' +
+      '<div class="scorebar">' +
+        '<div class="item"><div class="v">'+correctCount+'/'+total+'</div><div class="l">correctas</div></div>' +
+        '<div class="item"><div class="v">'+pct+'%</div><div class="l">precisión</div></div>' +
+      '</div>' +
+      '<button class="btn wide" id="shareBtn" onclick="UI.share()">Compartir mi resultado</button>' +
+      '<button class="btn wide secondary" style="margin-top:10px;" onclick="UI.toPlayerJoin()">Jugar otra partida</button>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ============================== RENDER ============================== */
+function render(){
+  var html = "";
+  switch(App.screen){
+    case "landing": html = screenLanding(); break;
+    case "hostSetup": html = screenHostSetup(); break;
+    case "hostReady": html = screenHostReady(); break;
+    case "hostQuestion": html = screenHostQuestion(); break;
+    case "hostReveal": html = screenHostReveal(); break;
+    case "hostFinal": html = screenHostFinal(); break;
+    case "playerJoin": html = screenPlayerJoin(); break;
+    case "playerReady": html = screenPlayerReady(); break;
+    case "playerQuestion": html = screenPlayerQuestion(); break;
+    case "playerFinal": html = screenPlayerFinal(); break;
+    default: html = screenLanding();
+  }
+  document.getElementById("app").innerHTML = html;
+  afterRender();
+}
+
+function afterRender(){
+  if (App.screen === "hostQuestion" || (App.screen === "playerQuestion" && !App.player.revealed)){
+    startRing();
+  }
+}
+
+function startRing(){
+  var fg = document.getElementById("ringFg");
+  var num = document.getElementById("ringNum");
+  if (!fg || !num) return;
+  var isHost = App.screen === "hostQuestion";
+  var durationSec = isHost ? App.host.duration : (App.player.qset[App.player.idx]._duration/1000);
+  var c = fg.getTotalLength ? fg.getTotalLength() : (2*Math.PI*(118/2-9));
+  fg.style.transition = "none";
+  fg.style.strokeDashoffset = "0";
+  // force reflow
+  void fg.getBoundingClientRect();
+  fg.style.transition = "stroke-dashoffset "+durationSec+"s linear";
+  requestAnimationFrame(function(){ fg.style.strokeDashoffset = String(c); });
+
+  var remaining = durationSec;
+  num.textContent = Math.ceil(remaining);
+  App.timers.tick = setInterval(function(){
+    remaining -= 1;
+    if (num) num.textContent = Math.max(0, Math.ceil(remaining));
+    if (remaining <= 0){
+      clearInterval(App.timers.tick);
+      if (isHost){
+        UI.hostReveal();
+      } else {
+        if (!App.player.locked) UI.playerAnswer(null);
+      }
+    }
+  }, 1000);
+}
+
+/* ============================== ACCIONES (UI) ============================== */
+var UI = {
+  toHostSetup: function(){
+    App.host.pin = App.host.pin || randPin();
+    go("hostSetup");
+  },
+  regenPin: function(){
+    App.host.pin = randPin();
+    render();
+  },
+  hostPinInput: function(v){ App.host.pin = v; },
+  setCount: function(c){
+    App.host.count = (c === "all") ? "all" : parseInt(c,10);
+    render();
+  },
+  setDuration: function(d){ App.host.duration = d; render(); },
+  createGame: function(){
+    var pinEl = document.getElementById("pinInput");
+    var pin = (pinEl && pinEl.value.trim()) || App.host.pin || randPin();
+    if (pin.length !== 4 || isNaN(pin)) { pin = randPin(); }
+    App.host.pin = pin;
+    App.host.qset = buildSet(App.host.pin, App.host.count, App.host.duration).map(function(q){
+      var copy = Object.assign({}, q);
+      copy._duration = App.host.duration*1000;
+      return copy;
+    });
+    App.host.idx = 0;
+    go("hostReady");
+  },
+  hostStartQuestion: function(){ go("hostQuestion"); },
+  hostReveal: function(){ go("hostReveal"); },
+  hostNext: function(){
+    if (App.host.idx < App.host.qset.length - 1){
+      App.host.idx += 1;
+      go("hostQuestion");
+    } else {
+      go("hostFinal");
+    }
+  },
+
+  toPlayerJoin: function(){ go("playerJoin"); },
+  pSetCount: function(c){ App.player.count = (c==="all") ? "all" : parseInt(c,10); render(); },
+  pSetDuration: function(d){ App.player.duration = d; render(); },
+  pPinInput: function(v){ App.player.pin = v; },
+  pNameInput: function(v){ App.player.name = v; },
+  playerJoin: function(){
+    var pin = (document.getElementById("pPin").value || "").trim();
+    var name = (document.getElementById("pName").value || "").trim() || "Jugador";
+    if (pin.length !== 4 || isNaN(pin)){
+      alert("Ingresa el código de 4 dígitos que te dio tu profesor.");
+      return;
+    }
+    App.player.pin = pin;
+    App.player.name = name;
+    App.player.qset = buildSet(pin, App.player.count, App.player.duration).map(function(q){
+      var copy = Object.assign({}, q);
+      copy._duration = App.player.duration*1000;
+      return copy;
+    });
+    App.player.idx = 0;
+    App.player.score = 0;
+    App.player.results = [];
+    go("playerReady");
+  },
+  playerStartQuestion: function(){
+    App.player.qStart = Date.now();
+    App.player.chosen = null;
+    App.player.chosenAt = null;
+    App.player.locked = false;
+    App.player.revealed = false;
+    go("playerQuestion");
+  },
+  playerAnswer: function(i){
+    if (App.player.locked) return;
+    App.player.chosen = i;
+    App.player.chosenAt = Date.now() - App.player.qStart;
+    App.player.locked = true;
+    clearTimers();
+    render();
+  },
+  playerReveal: function(){
+    var p = App.player;
+    var q = p.qset[p.idx];
+    var correct = p.chosen === q.c;
+    var elapsed = p.chosenAt==null ? q._duration : p.chosenAt;
+    var pts = calcScore(correct, elapsed, q._duration);
+    p.score += pts;
+    p.results.push(correct);
+    p.revealed = true;
+    render();
+  },
+  playerNext: function(){
+    var p = App.player;
+    if (p.idx < p.qset.length - 1){
+      p.idx += 1;
+      UI.playerStartQuestion();
+    } else {
+      go("playerFinal");
+    }
+  },
+  share: function(){
+    var p = App.player;
+    var total = p.qset.length;
+    var correctCount = p.results.filter(function(r){return r;}).length;
+    var text = "Obtuve "+p.score+" pts ("+correctCount+"/"+total+" correctas) en el Reto de Materiales de IMEC1402 🔧⚙️";
+    if (navigator.share){
+      navigator.share({ text: text }).catch(function(){});
+    } else if (navigator.clipboard){
+      navigator.clipboard.writeText(text).then(function(){
+        var b = document.getElementById("shareBtn");
+        if (b){ var old=b.textContent; b.textContent="Copiado ✓"; setTimeout(function(){b.textContent=old;},1600); }
+      });
+    }
+  }
+};
+
+window.UI = UI;
+window.go = go;
+
+render();
+})();
+</script>
+</body>
+</html>
+
+</body></html>
